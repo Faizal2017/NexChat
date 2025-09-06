@@ -1,0 +1,3 @@
+node_modules/   # don’t push dependencies
+.env            # don’t push secret keys
+dist/           # don’t push compiled files
