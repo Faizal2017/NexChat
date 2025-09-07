@@ -1,5 +1,5 @@
 import { useChatStore } from "../store/useChatStore";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
@@ -18,15 +18,22 @@ const ChatContainer = () => {
   } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     getMessages(selectedUser._id);
 
-   // subscribeToMessages();
+    subscribeToMessages();
 
-   // return () => unsubscribeFromMessages();
-  }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+    return () => unsubscribeFromMessages();
+  }, [
+    selectedUser._id,
+    getMessages,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  ]);
 
+  //scroll to bottom when messages change
   useEffect(() => {
     if (messageEndRef.current && messages) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -51,7 +58,9 @@ const ChatContainer = () => {
         {messages.map((message) => (
           <div
             key={message._id}
-            className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
+            className={`chat ${
+              message.senderId === authUser._id ? "chat-end" : "chat-start"
+            }`}
             ref={messageEndRef}
           >
             <div className=" chat-image avatar">
@@ -73,11 +82,73 @@ const ChatContainer = () => {
             </div>
             <div className="chat-bubble flex flex-col">
               {message.image && (
-                <img
-                  src={message.image}
-                  alt="Attachment"
-                  className="sm:max-w-[200px] rounded-md mb-2"
-                />
+                <>
+                  <img
+                    src={message.image}
+                    alt="Attachment"
+                    className="sm:max-w-[200px] rounded-md mb-2 cursor-pointer"
+                    loading="lazy"
+                    onClick={() => setSelectedImage(message.image)}
+                  />
+
+                  {/* lightbox modal */}
+                  {selectedImage && (
+                    <div
+                      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+                      onClick={() => setSelectedImage(null)}
+                    >
+                      <div
+                        className="relative max-w-[90%] max-h-[90%]"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <img
+                          src={selectedImage}
+                          alt="Preview"
+                          className="w-full h-auto rounded-md"
+                        />
+                        <div className="absolute top-2 right-2 flex gap-2">
+                          <button
+                            className="btn btn-sm"
+                            onClick={() => setSelectedImage(null)}
+                          >
+                            Close
+                          </button>
+                          <button
+                            className="btn btn-sm"
+                            onClick={async () => {
+                              try {
+                                // robust download for cross-origin images
+                                const res = await fetch(selectedImage, {
+                                  mode: "cors",
+                                });
+                                const blob = await res.blob();
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement("a");
+                                a.href = url;
+                                a.download = `image-${
+                                  message._id || Date.now()
+                                }`;
+                                document.body.appendChild(a);
+                                a.click();
+                                a.remove();
+                                URL.revokeObjectURL(url);
+                              } catch (err) {
+                                // fallback: open in new tab
+                                window.open(
+                                  selectedImage,
+                                  "_blank",
+                                  "noopener"
+                                );
+                              }
+                            }}
+                          >
+                            Download
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
               {message.text && <p>{message.text}</p>}
             </div>
