@@ -4,7 +4,10 @@ import {getUsersForSidebar,getMessages} from "../controllers/message.con.js"
 
 const router = express.Router();
 
-router.get("/", protectRoute, getUsersForSidebar);
+// List users for sidebar (frontend calls /messages/users)
+router.get("/users", protectRoute, getUsersForSidebar);
+
+// Get messages between logged-in user and :id
 router.get("/:id", protectRoute, getMessages);
 
 //router.post("/send/:id", protectRoute, sendMessage);
