@@ -4,19 +4,21 @@ import authRoute from "./routes/auth.route.js";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import messageRoute from "./routes/message.route.js";
-
-
+import cors from "cors";
 
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-
-
+app.use(
+  cors({
+    origin: "http://localhost:5173", //frontend url
+    credentials: true, //allow cookies
+  })
+);
 
 app.use("/api/auth", authRoute);
 app.use("/api/messages", messageRoute);
-
 
 const PORT = process.env.PORT || 5000;
 const MONGOURL = process.env.MONGO_URI;
