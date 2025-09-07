@@ -5,10 +5,9 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import messageRoute from "./routes/message.route.js";
 import cors from "cors";
-
+import {app , server} from "./lib/socket.js";
 dotenv.config();
 
-const app = express();
 
 // Parsers (place before routes)
 app.use(express.json({ limit: "10mb" }));
@@ -34,7 +33,7 @@ const startServer = async () => {
     await mongoose.connect(MONGOURL); // Connect to MongoDB
     console.log("✅ Database Connected Successfully");
 
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`🚀 Server is Running on Port ${PORT}`);
     });
   } catch (error) {
