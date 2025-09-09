@@ -40,7 +40,7 @@ const SignUpPage = () => {
       <div className="flex flex-col justify-center items-center p-6 sm:p-12">
         <div className="w-full max-w-md space-y-8">
           {/* LOGO */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 mt-6">
             <div className="flex flex-col items-center gap-2 group">
               <div
                 className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center 
@@ -60,7 +60,7 @@ const SignUpPage = () => {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="w-5 h-5 text-base-content/40" />
+                  <User className="w-5 h-5 text-base-content/40" style={{ color: "#a1a1a1", zIndex: 50 }}/>
                 </div>
                 <input
                   type="text"
@@ -78,7 +78,7 @@ const SignUpPage = () => {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="w-5 h-5 text-base-content/40" />
+                  <Mail className="w-5 h-5 text-base-content/40" style={{ color: "#a1a1a1", zIndex: 50 }}/>
                 </div>
                 <input
                   type="email"
@@ -96,7 +96,7 @@ const SignUpPage = () => {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="w-5 h-5 text-base-content/40" />
+                  <Lock className="w-5 h-5 text-base-content/40"style={{ color: "#a1a1a1", zIndex: 50 }} />
                 </div>
                 <input
                   type={showPassword ? "text" : "password"}

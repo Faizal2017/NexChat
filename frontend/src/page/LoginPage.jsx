@@ -3,7 +3,6 @@ import { useAuthStore } from "../store/useAuthStore";
 import AuthImagePattern from "../components/AuthImagePattern";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare } from "lucide-react";
-
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -44,14 +43,16 @@ const LoginPage = () => {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-base-content/40" />
+                  <Mail className="h-5 w-5 text-base-content/40" style={{ color: "#a1a1a1", zIndex: 50 }} />
                 </div>
                 <input
                   type="email"
                   className={`input input-bordered w-full pl-10`}
                   placeholder="you@example.com"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -62,14 +63,16 @@ const LoginPage = () => {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-base-content/40" />
+                  <Lock className="h-5 w-5 text-base-content/40" style={{ color: "#a1a1a1", zIndex: 50 }} />
                 </div>
                 <input
                   type={showPassword ? "text" : "password"}
                   className={`input input-bordered w-full pl-10`}
                   placeholder="••••••••"
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
                 />
                 <button
                   type="button"
@@ -85,7 +88,11 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary w-full" disabled={isLoggingIn}>
+            <button
+              type="submit"
+              className="btn btn-primary w-full"
+              disabled={isLoggingIn}
+            >
               {isLoggingIn ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -111,7 +118,9 @@ const LoginPage = () => {
       {/* Right Side - Image/Pattern */}
       <AuthImagePattern
         title={"Welcome back!"}
-        subtitle={"Sign in to continue your conversations and catch up with your messages."}
+        subtitle={
+          "Sign in to continue your conversations and catch up with your messages."
+        }
       />
     </div>
   );
