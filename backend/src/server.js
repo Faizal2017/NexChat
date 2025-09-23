@@ -32,10 +32,11 @@ app.use("/api/messages", messageRoute);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
-  // Express 5 uses path-to-regexp v6 which doesn't accept "*"; use a regex-style catch-all instead
-  app.get("/(.*)", (req, res) => {
+  app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
   });
+
+
 }
 
 const startServer = async () => {
