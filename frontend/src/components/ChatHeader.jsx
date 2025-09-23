@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 
 const ChatHeader = () => {
-  const { selectedUser, setSelectedUser } = useChatStore();
+  const { selectedUser, setSelectedUser, typingByUserId } = useChatStore();
   const { onlineUsers } = useAuthStore();
 
   return (
@@ -13,15 +13,22 @@ const ChatHeader = () => {
           {/* Avatar */}
           <div className="avatar">
             <div className="size-10 rounded-full relative">
-              <img src={selectedUser.profilePic || "/avatar.png"} alt={selectedUser.fullName} />
+              <img
+                src={selectedUser.profilePic || "/avatar.png"}
+                alt={selectedUser.fullName}
+              />
             </div>
           </div>
 
           {/* User info */}
           <div>
             <h3 className="font-medium">{selectedUser.fullName}</h3>
-            <p className="text-sm text-base-content/70">
-              {onlineUsers.includes(selectedUser._id) ? "Online" : "Offline"}
+            <p className="text-sm text-base-content/70 min-h-[1.25rem]">
+              {typingByUserId[selectedUser._id]
+                ? "Typing..."
+                : onlineUsers.includes(selectedUser._id)
+                ? "Online"
+                : "Offline"}
             </p>
           </div>
         </div>

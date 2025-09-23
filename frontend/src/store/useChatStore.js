@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import axiosInstance from "../lib/axios";
-import  {useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../store/useAuthStore";
 
 export const useChatStore = create((set, get) => ({
   messages: [],
@@ -9,6 +9,7 @@ export const useChatStore = create((set, get) => ({
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
+  typingByUserId: {}, // { [userId]: boolean }
 
   getUsers: async () => {
     set({ isUsersLoading: true });
@@ -63,11 +64,20 @@ export const useChatStore = create((set, get) => ({
         messages: [...get().messages, newMessage],
       });
     });
+
+    // typing indicator from selected user
+    socket.on("userTyping", ({ senderId, isTyping }) => {
+      if (senderId !== selectedUser._id) return;
+      set({
+        typingByUserId: { ...get().typingByUserId, [senderId]: !!isTyping },
+      });
+    });
   },
 
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
     socket.off("newMessage");
+    socket.off("userTyping");
   },
 
   setSelectedUser: (selectedUser) => set({ selectedUser }),

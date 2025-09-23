@@ -19,7 +19,6 @@ export function getReceiverSocketId(userId) {
 // used to store online users
 const userSocketMap = {}; // {userId: socketId}
 
-
 // listens for connections
 io.on("connection", (socket) => {
   console.log("A user connected", socket.id);
@@ -30,6 +29,20 @@ io.on("connection", (socket) => {
 
   // io.emit() is used to send events to all the connected clients
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+  // typing indicator relay
+  socket.on("typing", ({ receiverId, isTyping }) => {
+    try {
+      if (!receiverId) return;
+      const senderId = userId;
+      const receiverSocketId = getReceiverSocketId(receiverId);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("userTyping", { senderId, isTyping });
+      }
+    } catch (e) {
+      console.error("typing relay error", e);
+    }
+  });
 
   socket.on("disconnect", () => {
     console.log("A user disconnected", socket.id);

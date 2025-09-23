@@ -8,6 +8,7 @@ import cors from "cors";
 import {app , server} from "./lib/socket.js";
 dotenv.config();
 
+import path from "path";
 
 // Parsers (place before routes)
 app.use(express.json({ limit: "10mb" }));
@@ -21,12 +22,26 @@ app.use(
   })
 );
 
+
+
+const PORT = process.env.PORT || 5000;
+const MONGOURL = process.env.MONGO_URI;
+const __dirname = path.resolve();
+
 // Routes
 app.use("/api/auth", authRoute);
 app.use("/api/messages", messageRoute);
 
-const PORT = process.env.PORT || 5000;
-const MONGOURL = process.env.MONGO_URI;
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  });
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  });
+}
 
 const startServer = async () => {
   try {
