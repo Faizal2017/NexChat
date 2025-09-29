@@ -7,7 +7,13 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173"],
+    // Allow connections from both development and production URLs
+    origin: (origin, callback) => {
+      // Accept all origins for now to handle localhost and production deployment
+      callback(null, true);
+      // For more security, you could use: ["http://localhost:5173", "https://your-prod-domain.com"]
+    },
+    credentials: true,
   },
 });
 

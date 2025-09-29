@@ -2,9 +2,22 @@ import { useChatStore } from "../store/useChatStore";
 import Sidebar from "../components/Sidebar";
 import NoChatSelected from "../components/NoChatSelected";
 import ChatContainer from "../components/ChatContainer";
+import io from "socket.io-client";
 
 const HomePage = () => {
   const { selectedUser } = useChatStore();
+
+  const io = new Server(server, {
+    cors: {
+      // Allow connections from both development and production URLs
+      origin: (origin, callback) => {
+        // Accept all origins for now to handle localhost and production deployment
+        callback(null, true);
+        // For more security, you could use: ["http://localhost:5173", "https://your-prod-domain.com"]
+      },
+      credentials: true,
+    },
+  });
 
   return (
     <div className="min-h-[100dvh] bg-base-200">
@@ -36,3 +49,5 @@ const HomePage = () => {
   );
 };
 export default HomePage;
+
+origin: ["http://localhost:5173", "https://nexchat-lx5r.onrender.com/"];
