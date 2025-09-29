@@ -27,7 +27,12 @@ io.on("connection", (socket) => {
 
   // store the userId and socketId in map when a user connects
   const userId = socket.handshake.query.userId;
-  if (userId) userSocketMap[userId] = socket.id;
+  if (userId) {
+    // Store the user ID and socket ID mapping
+    userSocketMap[userId] = socket.id;
+    console.log(`User ${userId} connected with socket ${socket.id}`);
+    console.log("Current connected users:", Object.keys(userSocketMap));
+  }
 
   // io.emit() is used to send events to all the connected clients
   io.emit("getOnlineUsers", Object.keys(userSocketMap));

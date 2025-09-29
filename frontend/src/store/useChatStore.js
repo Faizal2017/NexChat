@@ -38,18 +38,18 @@ export const useChatStore = create((set, get) => ({
   sendMessage: async (messageData) => {
     const { selectedUser, messages } = get();
     try {
+      // Send the message to the server
       const res = await axiosInstance.post(
         `/messages/send/${selectedUser._id}`,
         messageData
       );
 
-      // Generate a unique ID for this message or use the ID from response
-      const messageId = res.data._id;
+      // We ALWAYS want to display our own sent messages immediately
+      // No need to wait for socket events for our own messages
 
-      // Check if this message already exists in our messages array
-      const messageExists = messages.some((msg) => msg._id === messageId);
-
-      // Only add the message if it doesn't already exist
+      // Add the new message to the local state
+      // First check if it's not already there (though it shouldn't be)
+      const messageExists = messages.some((msg) => msg._id === res.data._id);
       if (!messageExists) {
         set({ messages: [...messages, res.data] });
       }
@@ -66,22 +66,25 @@ export const useChatStore = create((set, get) => ({
     const socket = useAuthStore.getState().socket; // get the socket from auth store
 
     socket.on("newMessage", (newMessage) => {
-      // Check if this is a message from the selected user to the current user
-      // We only want to display messages where current user is the receiver
-      const isMessageSentFromSelectedUser =
-        newMessage.senderId === selectedUser._id;
       const currentUserId = useAuthStore.getState().authUser?._id;
 
-      // Only handle messages where we're the receiver
+      // Only process messages if we're the receiver (not the sender)
+      // And the message is either from or to the currently selected user
       if (
-        !isMessageSentFromSelectedUser ||
-        newMessage.senderId === currentUserId
-      )
-        return;
+        newMessage.receiverId === currentUserId &&
+        newMessage.senderId === selectedUser._id
+      ) {
+        // Check if the message already exists in our state
+        const messageExists = get().messages.some(
+          (msg) => msg._id === newMessage._id
+        );
 
-      set({
-        messages: [...get().messages, newMessage],
-      });
+        if (!messageExists) {
+          set({
+            messages: [...get().messages, newMessage],
+          });
+        }
+      }
     });
 
     // typing indicator from selected user
